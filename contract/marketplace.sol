@@ -46,6 +46,8 @@ contract Base {
 
     mapping(uint256 => Recipe) internal recipes;
 
+    mapping(address => uint256[]) internal liked;
+
     function addRecipe(
         string memory _title,
         string memory _image,
@@ -92,6 +94,7 @@ contract Base {
 
     function likeRecipe(uint256 _index) public {
         recipes[_index].likes++;
+        liked[msg.sender].push(_index);
     }
 
     function unlockRecipe(uint256 _index) public payable {
@@ -116,5 +119,9 @@ contract Base {
         returns (uint256[] memory)
     {
         return (unlockedRecipes[_profile]);
+    }
+
+    function getLiked(address _profile) public view returns (uint256[] memory) {
+        return (liked[_profile]);
     }
 }

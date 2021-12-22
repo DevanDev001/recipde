@@ -5,7 +5,7 @@ import marketplaceAbi from "../contract/marketplace.abi.json"
 import erc20Abi from "../contract/erc20.abi.json"
 
 const ERC20_DECIMALS = 18
-const MPContractAddress = "0xDa5A0538c802a074c24D2568F25d4f5BD99fEbC7"
+const MPContractAddress = "0x6E06db30959C54fCeFF7c1c0a029C269F2C7835c"
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
 
 let kit
@@ -296,15 +296,20 @@ document.querySelector("#unlocked").addEventListener("click", async (e) => {
 })
 
 document.querySelector(".like").addEventListener("click", async (e) => {
-    console.log(parseInt(e.target.id));
     notification(`⌛ Liking ...`)
-    try {
-      const result = await contract.methods
-        .likeRecipe(parseInt(e.target.id))
-        .send({ from: kit.defaultAccount })
-    } catch (error) {
-      notification(`⚠️ ${error}.`)
+    const _liked = await contract.methods.getLiked(kit.defaultAccount).call()
+    if (_liked.includes(e.target.id.toString())){
+      notification(`⚠️ Already Liked.`)
     }
-    notification(`🎉 Liked !!!`)
-    getProducts()
+    else {
+      try {
+        const result = await contract.methods
+          .likeRecipe(parseInt(e.target.id))
+          .send({ from: kit.defaultAccount })
+      } catch (error) {
+        notification(`⚠️ ${error}.`)
+      }
+      notification(`🎉 Liked !!!`)
+      getProducts()
+    }
 })
