@@ -42,11 +42,18 @@ contract Base {
         uint256 likes;
     }
 
+    
+
     mapping(address => uint256[]) internal unlockedRecipes;
 
-    mapping(uint256 => Recipe) internal recipes;
+    mapping(uint256 => Recipe) public recipes;
 
     mapping(address => uint256[]) internal liked;
+
+    modifier onlyOwner(uint256 _index){
+        require(recipes[_index].owner == msg.sender, "Callable by only owner");  
+        _;
+    }
 
     function addRecipe(
         string memory _title,
@@ -68,28 +75,16 @@ contract Base {
         recipesLength++;
     }
 
-    function getRecipe(uint256 _index)
-        public
-        view
-        returns (
-            address payable,
-            string memory,
-            string memory,
-            string memory,
-            string memory,
-            uint256,
-            uint256
-        )
-    {
-        return (
-            recipes[_index].owner,
-            recipes[_index].title,
-            recipes[_index].image,
-            recipes[_index].description,
-            recipes[_index].origin,
-            recipes[_index].price,
-            recipes[_index].likes
-        );
+    function editRecipe(uint256 _index,  string memory _title,
+        string memory _image,
+        string memory _description,
+        string memory _origin,
+        uint256 _price) onlyOwner(_index) public {
+            recipes[_index].title = _title; 
+            recipes[_index].image = _image;
+            recipes[_index].description = _description;
+            recipes[_index].origin = _origin;
+            recipes[_index].price = _price;
     }
 
     function likeRecipe(uint256 _index) public {
