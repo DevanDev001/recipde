@@ -27,7 +27,30 @@ interface IERC20Token {
     );
 }
 
+
+library SafeMath {
+    /**
+     * @dev Returns the addition of two unsigned integers, reverting on
+     * overflow.
+     *
+     * Counterpart to Solidity's `+` operator.
+     *
+     * Requirements:
+     *
+     * - Addition cannot overflow.
+     */
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+}
+
+
 contract Base {
+
+    using SafeMath for uint;
     uint256 internal recipesLength = 0;
     address internal cUsdTokenAddress =
         0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
@@ -65,7 +88,7 @@ contract Base {
             _price,
             _likes
         );
-        recipesLength++;
+        recipesLength.add(1);
     }
 
     function getRecipe(uint256 _index)
@@ -93,7 +116,7 @@ contract Base {
     }
 
     function likeRecipe(uint256 _index) public {
-        recipes[_index].likes++;
+        recipes[_index].likes.add(1);
         liked[msg.sender].push(_index);
     }
 
